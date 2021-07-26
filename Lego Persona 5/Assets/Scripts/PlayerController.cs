@@ -6,27 +6,37 @@ public class PlayerController : MonoBehaviour
 {
     // List of Variables that affect the Player Movement
     public float moveSpeed;
-    public Rigidbody theRB;
     public float jumpForce;
-    
+    public CharacterController controller;
+
+    private Vector3 moveDirection;
+    public float gravityScale;
     
     // Start is called before the first frame update
     void Start()
     {
-        theRB = GetComponent<Rigidbody>(); 
+       controller = GetComponent<CharacterController>();  
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Tells the Player when the input is pressed to move to that area
-        theRB.velocity = new Vector3(Input.GetAxis("Vertical") * moveSpeed, theRB.velocity.y, Input.GetAxis("Horizontal") * moveSpeed);
-    
-        if(Input.GetButtonDown("Jump")) 
+        
+        moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, moveDirection.y, Input.GetAxis("Vertical") * moveSpeed);
+        
+        if(controller.isGrounded)
         {
-            theRB.velocity = new Vector3(theRB.velocity.x, jumpForce, theRB.velocity.z);
+            if(Input.GetButtonDown("Jump"))
+            {
+                moveDirection.y = jumpForce;
+            }
         
         }
+
+        moveDirection.y = moveDirection.y + (Physics.gravity.y * gravityScale * Time.deltaTime);
+        controller.Move(moveDirection * Time.deltaTime);
+        
+      
     
     }
 }
